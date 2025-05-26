@@ -34,9 +34,16 @@ export default auth(async function middleware(req: NextRequest & { auth?: any })
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL(authRoutes[0], nextUrl));
+    let callbackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callbackUrl += nextUrl.search;
+    }
+
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+    const callbackUrlInfo = `${authRoutes[0]}?callbackUrl=${encodedCallbackUrl}`;
+    return NextResponse.redirect(new URL(callbackUrlInfo, nextUrl));
   }
-  // return NextResponse.next();
+  // return NextResponse.next()
 })
 
 

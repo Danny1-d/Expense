@@ -2,7 +2,7 @@
 
 import { LogOut } from "@/actions/LogOut";
 import { UseCurrentUser } from "@/hooks/UseCurrentUser";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 
 const page =  () => {
   const user = UseCurrentUser()

@@ -8,7 +8,7 @@ import {
   FormItem, 
   FormLabel, 
   FormControl, 
-  FormDescription, 
+  // FormDescription, 
   FormMessage 
 } from "@/components/ui/form";
 import { useForm } from 'react-hook-form';
@@ -25,6 +25,7 @@ import Link from "next/link";
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? undefined;
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? 
   "Email already in use with different provider" : "";
 
@@ -48,7 +49,7 @@ const LoginForm = () => {
     setSuccess("")
     
     startTransition(() => {
-      Login(values)
+      Login(values, callbackUrl)
       .then((data) => {
         if(data?.error) {
           form.reset();
