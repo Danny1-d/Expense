@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Poppins } from "next/font/google";
+// import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
