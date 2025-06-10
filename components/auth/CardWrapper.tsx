@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Header } from "@/components/auth/Header";
 import { Social } from "@/components/auth/Social";
-import Image from "next/image";
+// import Image from "next/image";
 import { BackButton } from "@/components/auth/BackButton";
 
 interface CardWrapperProps {
@@ -17,7 +17,7 @@ interface CardWrapperProps {
   backButtonLabel?: string;
   backButtonHref?: string;
   showSocial?: boolean;
-  imgSrc?: string
+  // imgSrc?: string
 }
 
 export const CardWrapper = ({
@@ -26,7 +26,7 @@ export const CardWrapper = ({
   backButtonHref,
   backButtonLabel,
   showSocial,
-  imgSrc
+  // imgSrc
 }:CardWrapperProps) => {
   return (
     <Card className="w-[300px] md:w-[600px] shadow-md px-5 md:px-20 m-auto">

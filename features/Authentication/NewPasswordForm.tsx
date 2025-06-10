@@ -57,7 +57,7 @@ export const NewPasswordForm = () => {
         headerLabel="Enter a new password"
         backButtonLabel="Back to login"
         backButtonHref="/auth/login"
-        imgSrc="/danny1.png"
+        // imgSrc="/danny1.png"
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col gap-4">

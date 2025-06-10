@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { 
   Form,
   FormField, 
@@ -21,11 +21,11 @@ import { Budget } from "@/actions/Budget";
 import { useSearchParams } from "next/navigation";
 
 const Expense = () => {
-  const [budget, setBudget] = useState<number>();
-  const [expenses, setExpenses] = useState<{ name: string; amount: number }>({
-    name: "",
-    amount: 0,
-  });
+  // const [budget, setBudget] = useState<number>();
+  // const [expenses, setExpenses] = useState<{ name: string; amount: number }>({
+  //   name: "",
+  //   amount: 0,
+  // });
 
   const searchParams = useSearchParams();
     const token = searchParams.get("token");

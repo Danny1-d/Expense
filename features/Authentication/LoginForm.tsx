@@ -74,7 +74,7 @@ const LoginForm = () => {
         backButtonLabel="Don't have an account?"
         backButtonHref="/auth/register"
         showSocial
-        imgSrc="/danny1.png"
+        // imgSrc="/danny1.png"
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col gap-4">

@@ -12,7 +12,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { BeatLoader} from "react-spinners"
 
 import { Transactions, getLatestBudget, getBudget } from '@/data/GetInfo';
-import Header from "./Header";
+// import Header from "./Header";
 
 
 interface Expenses {

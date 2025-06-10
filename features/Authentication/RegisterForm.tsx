@@ -53,7 +53,7 @@ const RegisterForm = () => {
         backButtonLabel="Already have an account?"
         backButtonHref="/auth/login"
         showSocial
-        imgSrc="/danny1.png"
+        // imgSrc="/danny1.png"
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

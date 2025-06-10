@@ -54,7 +54,7 @@ export const ResetForm = () => {
         headerLabel="Forgot your password"
         backButtonLabel="Back to login"
         backButtonHref="/auth/login"
-        imgSrc="/danny1.png"
+        // imgSrc="/danny1.png"
       >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
