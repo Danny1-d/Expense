@@ -56,15 +56,15 @@ const RegisterForm = () => {
         imgSrc="/danny1.png"
       >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="text-gray-300">FirstName</FormLabel>
                     <FormControl>
                       <Input 
                         disabled={pending}
@@ -83,7 +83,7 @@ const RegisterForm = () => {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel> LastName</FormLabel>
+                    <FormLabel className="text-gray-300"> LastName</FormLabel>
                     <FormControl>
                       <Input
                         disabled={pending}
@@ -102,7 +102,7 @@ const RegisterForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-300">Email</FormLabel>
                     <FormControl>
                       <Input
                         disabled={pending}
@@ -121,7 +121,7 @@ const RegisterForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel> Password</FormLabel>
+                    <FormLabel className="text-gray-300"> Password</FormLabel>
                     <FormControl>
                       <Input
                         disabled={pending}

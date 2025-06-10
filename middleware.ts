@@ -21,15 +21,15 @@ export default auth(async function middleware(req: NextRequest & { auth?: any })
   // If the user is logged in and trying to access an auth route, redirect them to the default login redirect
 
   if (isApiAuthRoute) {
-    // return NextResponse.redirect(new URL(authRoutes[0], nextUrl));
+    // return NextResponse.redirect(new URL(authRoutes[1], nextUrl));
     return NextResponse.next();
   }
   
 
   if(isAuthRoute) {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    }
+    // if (isLoggedIn) {
+    //   return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT,nextUrl));
+    // }
     return NextResponse.next();
   }
 
@@ -40,7 +40,7 @@ export default auth(async function middleware(req: NextRequest & { auth?: any })
     }
 
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-    const callbackUrlInfo = `${authRoutes[0]}?callbackUrl=${encodedCallbackUrl}`;
+    const callbackUrlInfo = `${authRoutes[1]}?callbackUrl=${encodedCallbackUrl}`;
     return NextResponse.redirect(new URL(callbackUrlInfo, nextUrl));
   }
   // return NextResponse.next()
@@ -48,6 +48,6 @@ export default auth(async function middleware(req: NextRequest & { auth?: any })
 
 
 export const config = {
-  // This middleware will only run for the specified paths
+  // This middleware will only run for the specified paths. Any route specified here will invoke the function above.
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }

@@ -57,9 +57,9 @@ export const ResetForm = () => {
         imgSrc="/danny1.png"
       >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="email"

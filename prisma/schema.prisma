@@ -26,6 +26,8 @@ model User {
   accounts  Account[]
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  budgets   BudgetEntry[]
+  transaction Transaction[]
 }
 
 model Account {
@@ -81,4 +83,24 @@ model TwoFactorConfirmation {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
+}
+
+model BudgetEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  amount    Int
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String 
+  item      String
+  amount    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

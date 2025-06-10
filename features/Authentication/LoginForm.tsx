@@ -86,7 +86,7 @@ const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem className={`flex flex-col ${!showTwoFactor ? 'hidden' : ''}`}>
-                    <FormLabel>Two Factor Code</FormLabel>
+                    <FormLabel className="text-gray-300">Two Factor Code</FormLabel>
                     <FormControl>
                       <Input
                         {...field} 
@@ -107,7 +107,7 @@ const LoginForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-300">Email</FormLabel>
                     <FormControl>
                       <Input 
                         disabled={pending}
@@ -126,7 +126,7 @@ const LoginForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel> Password</FormLabel>
+                    <FormLabel className="text-gray-300"> Password</FormLabel>
                     <FormControl>
                       <Input
                         disabled={pending}

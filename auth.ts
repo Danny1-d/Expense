@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import authConfig from "./auth.config"
+import authConfig from "@/auth.config"
 import { db } from "@/lib/db"
 import { getUserById } from "@/data/User"
 
@@ -57,7 +57,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }) {
-      console.log("Session Callback:", token);
+      // console.log("Session Callback:", token);
       
       if (token.sub && session.user) {
         // Attach the user ID to the session object

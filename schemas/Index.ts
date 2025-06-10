@@ -36,3 +36,18 @@ export const NewPasswordSchema = z.object({
     message: "Password is required"
   })
 });
+
+export const  BudgetSchema = z.object({
+  budget: z.string().nonempty({
+    message: "budget is required"
+  })
+});
+
+export const  TransactionSchema = z.object({
+  item: z.string().nonempty({
+    message: "Item is required"
+  }),
+  amount: z.string().nonempty({
+    message: "Amount is required"
+  }),
+});
