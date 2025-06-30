@@ -6,53 +6,57 @@ import { getUserByEmail } from "@/data/User";
 
 
 // This is grouped by month
-export const getTransactions = async () => {
-  const user = await getCurrentUser();
-  const recentUser = user?.email;
+// export const getTransactions = async () => {
+//   const user = await getCurrentUser();
+//   const recentUser = user?.email;
 
-  if (!recentUser) {
-    return { error: "User email not found!" };
-  }
+//   if (!recentUser) {
+//     return { error: "User email not found!" };
+//   }
 
-  const existingUser = await getUserByEmail(recentUser);
+//   const existingUser = await getUserByEmail(recentUser);
 
-  if (!existingUser) {
-    return { error: "User not found!" };
-  }
+//   if (!existingUser) {
+//     return { error: "User not found!" };
+//   }
 
-  const transactions = await db.transaction.findMany({
-    where: {
-      userId: existingUser.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+//   // Get all transaction to this user
+//   const transactions = await db.transaction.findMany({
+//     where: {
+//       userId: existingUser.id,
+//     },
+//     // In desc order (newest first)
+//     orderBy: {
+//       createdAt: "desc",
+//     },
+//   });
 
-  if (!transactions || transactions.length === 0) {
-    return { error: "No transaction entries found!" };
-  }
+//   if (!transactions || transactions.length === 0) {
+//     return { error: "No transaction entries found!" };
+//   }
 
-  const grouped = transactions.reduce((acc, tx) => {
-    const date = new Date(tx.createdAt);
-    const monthKey = `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+//   const grouped = transactions.reduce((acc, tx) => {
+//     const date = new Date(tx.createdAt);
+//     // convert the date to a human readable date
+//     const monthKey = `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
 
-    if (!acc[monthKey]) {
-      acc[monthKey] = [];
-    }
+//     if (!acc[monthKey]) {
+//       acc[monthKey] = [];
+//     }
 
-    acc[monthKey].push(tx);
-    return acc;
-  }, {} as Record<string, typeof transactions>);
+//     acc[monthKey].push(tx);
+//     return acc;
+//   }, {} as Record<string, typeof transactions>);
 
 
-  const result = Object.entries(grouped).map(([month, txs]) => ({
-    month,
-    transactions: txs,
-  }));
+//   // convert to an array
+//   const result = Object.entries(grouped).map(([month, txs]) => ({
+//     month,
+//     transactions: txs,
+//   }));
 
-  return result;
-};
+//   return result;
+// };
 
 
 // This is grouped by month
@@ -70,10 +74,12 @@ export const getLatestBudget = async () => {
     return { error: "User not found!" };
   }
 
+  // Get all transaction to this user
   const latestBudget = await db.budgetEntry.findFirst({
     where: {
       userId: existingUser.id,
     },
+     // In desc order (newest first)
     orderBy: {
       createdAt: "desc",
     },
@@ -95,8 +101,8 @@ export const getLatestBudget = async () => {
     where: {
       userId: existingUser.id,
       createdAt: {
-        gte: startOfMonth,
-        lt: endOfMonth,
+        gte: startOfMonth, // greater than or equal to
+        lt: endOfMonth, // less than
       },
     },
   });
@@ -167,11 +173,11 @@ export const getBudget = async () => {
   }
 
   // Calculate total amount
-  const totalAmount = budgetEntries.reduce((sum, entry) => sum + entry.amount, 0);
+  const totalAmount = budgetEntries.reduce((acc, entry) => acc + entry.amount, 0);
 
   // Get the most recent one too
-  const latestEntry = budgetEntries.reduce((latest, entry) => {
-    return new Date(entry.createdAt) > new Date(latest.createdAt) ? entry : latest;
+  const latestEntry = budgetEntries.reduce((acc, entry) => {
+    return new Date(entry.createdAt) > new Date(acc.createdAt) ? entry : acc;
   }, budgetEntries[0]);
 
   return {
@@ -179,5 +185,72 @@ export const getBudget = async () => {
     latestBudget: latestEntry.amount,
     latestCreatedAt: latestEntry.createdAt,
     entriesCount: budgetEntries.length,
+  };
+};
+
+export const getLatestMonthTransactions = async () => {
+  const user = await getCurrentUser();
+  const recentUser = user?.email;
+
+  if (!recentUser) {
+    return { error: "User email not found!" };
+  }
+
+  const existingUser = await getUserByEmail(recentUser);
+
+  if (!existingUser) {
+    return { error: "User not found!" };
+  }
+
+  const transactions = await db.transaction.findMany({
+    where: {
+      userId: existingUser.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if (!transactions || transactions.length === 0) {
+    return { error: "No transaction entries found!" };
+  }
+
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0-based
+  const currentYear = now.getFullYear();
+
+  let currentMonthTotal = 0;
+
+  const grouped = transactions.reduce((acc, tx) => {
+    const date = new Date(tx.createdAt);
+    const txMonth = date.getMonth();
+    const txYear = date.getFullYear();
+    
+    // convert the date to a human readable date
+    const monthKey = `${date.toLocaleString("default", { month: "long" })} ${txYear}`;
+
+    if (!acc[monthKey]) {
+      acc[monthKey] = [];
+    }
+
+    acc[monthKey].push(tx);
+
+    if (txMonth === currentMonth && txYear === currentYear) {
+      currentMonthTotal += Number(tx.amount); // assumes tx.amount is numeric or stringified number
+    }
+
+    return acc;
+  }, {} as Record<string, typeof transactions>);
+
+  // convert to an array
+  const result = Object.entries(grouped).map(([month, txs]) => ({
+    month,
+    transactions: txs,
+  }));
+
+  return {
+    currentMonth: now.toLocaleString("default", { month: "long", year: "numeric" }),
+    currentMonthTotal,
+    groupedTransactions: result,
   };
 };

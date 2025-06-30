@@ -29,7 +29,7 @@ export const CardWrapper = ({
   // imgSrc
 }:CardWrapperProps) => {
   return (
-    <Card className="w-[300px] md:w-[600px] shadow-md px-5 md:px-20 m-auto">
+    <Card className="w-[350px] md:w-[600px] shadow-md px-2 md:px-20 m-auto">
       <CardHeader>
         <Header label={headerLabel ?? ""}/>
         {/* {imgSrc && (
@@ -56,8 +56,8 @@ export const CardWrapper = ({
 
       <CardFooter>
         <BackButton
-          label={backButtonLabel ?? "Back"}
-          href={backButtonHref ?? "/"}
+          label={backButtonLabel ?? ""}
+          href={backButtonHref ?? ""}
         />
       </CardFooter>
     </Card>

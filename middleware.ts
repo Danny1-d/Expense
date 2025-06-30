@@ -2,7 +2,7 @@ import authConfig from "@/auth.config"
 import NextAuth from "next-auth"
 import { NextRequest, NextResponse } from "next/server"
 import {
-  DEFAULT_LOGIN_REDIRECT,
+  // DEFAULT_LOGIN_REDIRECT,
   apiAuthPrefix,
   authRoutes,
   publicRoutes,
@@ -21,7 +21,7 @@ export default auth(async function middleware(req: NextRequest & { auth?: any })
   // If the user is logged in and trying to access an auth route, redirect them to the default login redirect
 
   if (isApiAuthRoute) {
-    // return NextResponse.redirect(new URL(authRoutes[1], nextUrl));
+    return NextResponse.redirect(new URL(authRoutes[1], nextUrl));
     return NextResponse.next();
   }
   

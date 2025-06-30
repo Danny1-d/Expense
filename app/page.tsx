@@ -18,7 +18,7 @@ const HomePage = () => {
             <Image 
               src='/danny1.png'
               alt="Danny"
-              width={250} 
+              width={200}
               height={0}
             />
           <div className="md:p-6 p-3">

@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
-import { formatInTimeZone } from 'date-fns-tz';
-import { useState, useEffect } from "react";
-
-import { getTransactions, getLatestBudget } from '@/data/GetInfo';
+import React, { useState, useEffect } from "react";
+import { formatInTimeZone } from "date-fns-tz";
+import { getLatestMonthTransactions, getLatestBudget } from "@/data/GetInfo";
+import { BeatLoader } from "react-spinners";
 
 interface Transaction {
   id: string;
@@ -18,77 +17,95 @@ interface TransactionsByMonth {
   transactions: Transaction[];
 }
 
-interface Budget {
+interface TransactionsResult {
+  currentMonth: string;
+  currentMonthTotal: number;
+  groupedTransactions: TransactionsByMonth[];
+}
+
+interface UserBudget {
   amount: number | null;
   createdAt: Date | null;
   canAddNewBudget: boolean;
 }
 
-type TransactionsResult = TransactionsByMonth[] | { error: string };
-type BudgetResult = Budget | { error: string };
+type TransactionsResponse = TransactionsResult | { error: string };
+type BudgetResponse = UserBudget | { error: string };
 
 const Transactions = () => {
-
-  const [expense, setExpense] = useState<TransactionsResult>();
-  const [budget, setBudget] = useState<BudgetResult>()
+  const [expense, setExpense] = useState<TransactionsResponse>();
+  const [budget, setBudget] = useState<BudgetResponse>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const data = await getTransactions();
-      setExpense(data);
+    const fetchData = async () => {
+      const [transactionsData, budgetData] = await Promise.all([
+        getLatestMonthTransactions(),
+        getLatestBudget(),
+      ]);
+
+      setExpense(transactionsData);
+      setBudget(budgetData);
+      setLoading(false);
     };
-    
-    fetchTransactions();
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchBudget = async () => {
-      const data = await getLatestBudget();
-      setBudget(data);
-    };
-
-    fetchBudget();
-  }, []);  
+  const isExpenseError = expense && "error" in expense;
+  const isBudgetError = budget && "error" in budget;
 
   return (
-    <div className="">
-      <h2 className="bg-[#340260] text-[#C2C2C2] p-2 text-sm md:text-xl rounded-md text-center">Expenses Made in the Past Months</h2>
-        <div className="bg-white p-8 rounded-lg shadow-sm mb-15">
-          <div className="flex items-center justify-between">
-            <h3 className="md:text-lg text-sm text-gray-800">Total Amount spent this Month</h3>
-            {/* <h2>
-              {budget
-                ? 'error' in budget
-                  ? budget.error
-                  : (budget as Budget).amount
-                : 'Loading...'}
-            </h2> */}
+    <div>
+      <h2 className="bg-[#340260] text-[#C2C2C2] p-2 text-sm md:text-xl rounded-md text-center">
+        Expenses Made in the Past Months
+      </h2>
 
-              {budget && 'amount' in budget && budget.amount ? (
-                <div>
-                  <p className="text-lg">${budget.amount}</p>
-                  <p className="text-sm text-gray-500">
-                     {budget.createdAt ? new Date(budget.createdAt).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
-                ) : (
-                  <p>No budget set yet.</p>
-              )}
-
-            {budget && 'canAddNewBudget' in budget && budget.canAddNewBudget ? (
-              <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-                Add Budget for This Month
-              </button>
+      <div className="bg-white p-8 rounded-lg shadow-sm mb-15">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm text-gray-800">
+              Total Amount Spent This Month
+            </h3>
+            {!isExpenseError && expense ? (
+              <p className="text-xl font-bold text-blue-700">
+                ${expense.currentMonthTotal.toFixed(2)}
+              </p>
             ) : (
-              <p className="mt-4 text-green-600">You’ve already set a budget this month ✅</p>
+              <p className="text-red-500">Failed to load expense data</p>
             )}
           </div>
+
+          <div>
+            {!isExpenseError && expense && (
+              <h2 className="text-lg font-semibold">
+                Budget for {expense.currentMonth}
+              </h2>
+            )}
+
+            {/* if is it not isBudgetError and it is budget and they exist a key called amount in budget */}
+            {!isBudgetError && budget && "amount" in budget ? (
+              <p className="text-xl font-bold text-green-700">
+                ${budget.amount?.toFixed(2) ?? "Not set"}
+              </p>
+            ) : (
+              <p className="text-red-500">No budget data found</p>
+            )}
+
+            {!isBudgetError &&
+              budget &&
+              "canAddNewBudget" in budget &&
+              !budget.canAddNewBudget && (
+                <p className="text-sm text-gray-600 mt-1">
+                  A new budget can’t be added this month.
+                </p>
+              )}
+          </div>
         </div>
+      </div>
 
-
-
+      {/* Transactions Table */}
       <table className="w-full">
-
         <thead className="bg-[#340260] text-[#C2C2C2]">
           <tr>
             <th className="p-4 text-sm">Date</th>
@@ -96,41 +113,43 @@ const Transactions = () => {
             <th className="p-4 text-sm">Description</th>
           </tr>
         </thead>
-        
         <tbody className="bg-white">
-          {Array.isArray(expense) ? (
-            expense.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="p-4 text-center">No transactions found.</td>
-              </tr>
-            ) : (
-              expense.map((monthGroup, idx) => (
-                <React.Fragment key={monthGroup.month}>
-                  <tr>
-                    <td colSpan={3} className="p-4 font-bold bg-gray-100">{monthGroup.month}</td>
-                  </tr>
-                  {monthGroup.transactions.map((list) => (
-                    <tr key={list.id}>
-                      <td className="p-4 text-sm">{formatInTimeZone(new Date(list.createdAt), 'UTC', 'yyyy-MM-dd')}</td>
-                      <td className="p-4 text-sm">{list.amount}</td>
-                      <td className="p-4 text-sm">{list.item}</td>
-                    </tr>
-                  ))}
-                </React.Fragment>
-              ))
-            )
-          )
-           : (
+          {!expense || isExpenseError ? (
             <tr>
-              <td colSpan={3} className="p-4 text-center">Loading ...</td>
+              <td colSpan={3} className="p-4 text-center">
+                <BeatLoader size={5} />
+              </td>
             </tr>
-          )
-          }
+          ) : expense.groupedTransactions.length === 0 ? (
+            <tr>
+              <td colSpan={3} className="p-4 text-center">
+                No transactions found.
+              </td>
+            </tr>
+          ) : (
+            expense.groupedTransactions.map((monthGroup) => (
+              <React.Fragment key={monthGroup.month}>
+                <tr>
+                  <td colSpan={3} className="p-4 font-bold bg-gray-100">
+                    {monthGroup.month}
+                  </td>
+                </tr>
+                {monthGroup.transactions.map((tx) => (
+                  <tr key={tx.id}>
+                    <td className="p-4 text-sm">
+                      {formatInTimeZone(new Date(tx.createdAt), "UTC", "yyyy-MM-dd")}
+                    </td>
+                    <td className="p-4 text-sm">${tx.amount}</td>
+                    <td className="p-4 text-sm">{tx.item}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))
+          )}
         </tbody>
       </table>
-
     </div>
-  )
-}
+  );
+};
 
 export default Transactions;

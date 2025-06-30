@@ -16,8 +16,8 @@ export const Header = ({
   label
 }: HeaderProps) => {
   return(
-    <div className="w-full flex flex-col items-center justify-center">
-         <Image 
+    <div className="flex flex-col items-center justify-center">
+         <Image
             src="/danny1.png"
             alt="danny"
             width={300}

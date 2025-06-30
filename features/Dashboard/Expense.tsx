@@ -19,6 +19,7 @@ import * as z from "zod"
 import { Transaction } from "@/actions/Transaction";
 import { Budget } from "@/actions/Budget";
 import { useSearchParams } from "next/navigation";
+import { CardWrapper } from "@/components/auth/CardWrapper";
 
 const Expense = () => {
   // const [budget, setBudget] = useState<number>();
@@ -48,7 +49,7 @@ const Expense = () => {
       }
     })
   
-    const onSubmit =(values: z.infer<typeof BudgetSchema>) => {
+    const onSubmit: (values: z.infer<typeof BudgetSchema>) => void = (values) => {
   
       // console.log("Budget:", values)
       
@@ -73,16 +74,20 @@ const Expense = () => {
     }
 
   return (
-    <div className="flex flex-col m-auto gap-20 w-1/2">
+    <div className="flex flex-col m-auto">
+      <CardWrapper
+        headerLabel="Budget"
+      >
+      <div className="flex flex-col gap-5">
       <Form {...form1}>
-        <form onSubmit={form1.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={form1.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2">
             <FormField
               control={form1.control}
               name="budget"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Budget</FormLabel>
+                  {/* <FormLabel>Budget</FormLabel> */}
                   <FormControl>
                     <Input 
                       disabled={pending}
@@ -116,7 +121,7 @@ const Expense = () => {
                 name="item"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Item</FormLabel>
+                    {/* <FormLabel>Item</FormLabel> */}
                     <FormControl>
                       <Input
                         disabled={suspended}
@@ -135,7 +140,7 @@ const Expense = () => {
                 name="amount"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Amount</FormLabel>
+                    {/* <FormLabel>Amount</FormLabel> */}
                     <FormControl>
                       <Input
                         disabled={suspended}
@@ -160,6 +165,9 @@ const Expense = () => {
           </form>
         </Form>
       </div>
+
+      </div>
+      </CardWrapper>
     </div>
   )
 }

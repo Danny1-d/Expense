@@ -50,33 +50,23 @@ export const Chart = () => {
 
   const [expense, setExpense] = useState<TransactionsResult>();
   const [budget, setBudget] = useState<BudgetResult>();
-  const [ total, setTotal ] = useState<TransactionResult>();
-
-
+  const [total, setTotal ] = useState<TransactionResult>();
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const data = await Transactions();
-      setExpense(data);
-    };
-    fetchTransactions();
-  }, []);
+    const fetchData = async () => {
+      const [transactionsData, budgetData, budget] = await Promise.all([
+        Transactions(),
+        getLatestBudget(),
+        getBudget()
+      ]);
 
-  useEffect(() => {
-    const fetchBudget = async () => {
-      const data = await getLatestBudget();
-      setBudget(data);
+      setExpense(transactionsData);
+      setBudget(budgetData);
+      setTotal(budget);
+      // setLoading(false);
     };
 
-    fetchBudget();
-  }, []);  
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      const data = await getBudget();
-      setTotal(data);
-    };
-    fetchTransactions();
+    fetchData();
   }, []);
 
   const expenses: Expenses[] = [
@@ -124,7 +114,7 @@ export const Chart = () => {
     };
 
   return (
-    <div className="h-full">
+    <div className="">
       <div className="flex justify-between">
         <h2 className="text-[#272424] p-2 font-bold text-lg rounded-md">Welcome Onboard, {user?.name}</h2>
         {/* <Header title={getHeaderTitle() || "Header"} activeTab={activeTab} setActiveTab={setActiveTab} /> */}
@@ -153,10 +143,11 @@ export const Chart = () => {
               {/* <h4 className="text-[#4d1b7a] font-bold">$ 500,000</h4> */}
               <h2 className="text-[#4d1b7a] font-bold">
                $ {budget
-                ? 'error' in budget
-                  ? budget.error
-                  : (budget as Budget).amount
-                : <BeatLoader size={5}/> }
+                    ? 'error' in budget
+                      ? budget.error
+                      : (budget as Budget).amount
+                    : <BeatLoader size={5}/> 
+                  }
               </h2>
           </div>
           </div>
@@ -203,7 +194,7 @@ export const Chart = () => {
               </div>
               <h3 className="text-[#863cc6]">{item.amount}</h3>
             </div>
-          )): <div className="text-center">Loading ...</div>}
+          )): <div className="text-center"><BeatLoader size={5}/></div>}
         </div>
 
         <div>
